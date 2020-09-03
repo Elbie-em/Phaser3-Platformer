@@ -28,10 +28,10 @@ class SceneMain extends Phaser.Scene {
 		platforms.create(750, 220, 'ground');
 
 		//Adding the player
-		const player = this.physics.add.sprite(100, 450, 'dude');
+		this.player = this.physics.add.sprite(100, 450, 'dude');
 
-		player.setBounce(0.2);
-		player.setCollideWorldBounds(true);
+		this.player.setBounce(0.2);
+		this.player.setCollideWorldBounds(true);
 
 		this.anims.create({
 			key: 'left',
@@ -53,10 +53,29 @@ class SceneMain extends Phaser.Scene {
 			repeat: -1
 		});
 
-		this.physics.add.collider(player, platforms);
+		this.physics.add.collider(this.player, platforms);
 	}
 
 	update() {
+		const cursors = this.input.keyboard.createCursorKeys();
+		if (cursors.left.isDown) {
+			this.player.setVelocityX(-160);
 
+			this.player.anims.play('left', true);
+		}
+		else if (cursors.right.isDown) {
+			this.player.setVelocityX(160);
+
+			this.player.anims.play('right', true);
+		}
+		else {
+			this.player.setVelocityX(0);
+
+			this.player.anims.play('turn');
+		}
+
+		if (cursors.up.isDown && this.player.body.touching.down) {
+			this.player.setVelocityY(-330);
+		}
 	}
 }
