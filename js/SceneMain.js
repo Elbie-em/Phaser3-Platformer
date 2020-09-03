@@ -54,6 +54,21 @@ class SceneMain extends Phaser.Scene {
 		});
 
 		this.physics.add.collider(this.player, platforms);
+
+		this.stars = this.physics.add.group({
+			key: 'star',
+			repeat: 11,
+			setXY: { x: 12, y: 0, stepX: 70 }
+		});
+
+		this.stars.children.iterate((child) => {
+
+			child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+
+		});
+
+		this.physics.add.collider(this.stars, platforms);
+		this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
 	}
 
 	update() {
@@ -78,4 +93,9 @@ class SceneMain extends Phaser.Scene {
 			this.player.setVelocityY(-330);
 		}
 	}
+
+	collectStar(player, star){
+		star.disableBody(true, true);
+	}
+
 }
