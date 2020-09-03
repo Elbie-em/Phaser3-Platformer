@@ -70,6 +70,13 @@ class SceneMain extends Phaser.Scene {
 		this.physics.add.collider(this.stars, platforms);
 		this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
 
+		//set up enemies
+		this.bombs = this.physics.add.group();
+
+		this.physics.add.collider(this.bombs, platforms);
+
+		this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
+
 		//Score set up
 		this.score = 0;
 		this.scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
@@ -101,7 +108,15 @@ class SceneMain extends Phaser.Scene {
 	collectStar(player, star) {
 		star.disableBody(true, true);
 		this.score += 10;
-    this.scoreText.setText('Score: ' + this.score);
+		this.scoreText.setText('Score: ' + this.score);
+	}
+
+	hitBomb (player, bomb) {
+		this.physics.pause();
+
+    player.setTint(0xff0000);
+
+    player.anims.play('turn');
 	}
 
 }
