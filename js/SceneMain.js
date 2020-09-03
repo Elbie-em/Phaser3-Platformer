@@ -53,8 +53,7 @@ class SceneMain extends Phaser.Scene {
 			repeat: -1
 		});
 
-		this.physics.add.collider(this.player, platforms);
-
+		
 		this.stars = this.physics.add.group({
 			key: 'star',
 			repeat: 11,
@@ -67,19 +66,20 @@ class SceneMain extends Phaser.Scene {
 
 		});
 
-		this.physics.add.collider(this.stars, platforms);
-		this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
-
+	
 		//set up enemies
 		this.bombs = this.physics.add.group();
-
-		this.physics.add.collider(this.bombs, platforms);
-
-		this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
 
 		//Score set up
 		this.score = 0;
 		this.scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
+
+		//Collision
+		this.physics.add.collider(this.player, platforms);
+		this.physics.add.collider(this.stars, platforms);
+		this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
+		this.physics.add.collider(this.bombs, platforms);
+		this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
 	}
 
 	update() {
@@ -109,6 +109,23 @@ class SceneMain extends Phaser.Scene {
 		star.disableBody(true, true);
 		this.score += 10;
 		this.scoreText.setText('Score: ' + this.score);
+
+		if (this.stars.countActive(true) === 0)
+    {
+        this.stars.children.iterate((child) => {
+
+            child.enableBody(true, child.x, 0, true, true);
+
+        });
+
+        let x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
+
+        let bomb = this.bombs.create(x, 16, 'bomb');
+        bomb.setBounce(1);
+        bomb.setCollideWorldBounds(true);
+        bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
+
+    }
 	}
 
 	hitBomb (player, bomb) {
